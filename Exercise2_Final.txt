@@ -1,0 +1,76 @@
+Finish SQL Exercise-2.sql. Commit and push your finished sql file to your Github repository. 
+Leave the URL of your Github repository in the comment area. You will be graded in Blackboard. 
+See the My Grades section for details.
+
+
+Matthew Tran
+
+
+/*1. Display the total amount collected from the orders for each order date. */
+
+https://docs.microsoft.com/en-us/sql/t-sql/functions/string-functions-transact-sql
+
+ select Orderdate as Order_date, 
+ round(sum(totaldue),2) as Total_amount
+ from sales.SalesOrderheader
+ group by orderdate 
+ order by orderdate desc;
+
+/*2. Display the total amount collected after selling the products, 774 and 777. */
+
+  select productid,
+  round (sum(linetotal),2) as total
+  from sales.salesorderdetail
+  where productid in ('774' ,'777')
+  group by productid 
+  order by productid desc; 
+
+
+/*3. Write a query to display the sales person ID of all the sales persons and the name of the territory to which they belong.*/
+
+  select c.FirstName, c.MiddleName, c.LastName, a.TerritoryID,b.name as Territory_Name,  b.CountryRegionCode as Country_Region
+  from sales.salesperson a
+  left join  sales.SalesTerritory b  
+  on a.TerritoryID=b.TerritoryID
+  join  person.person c
+  on a.businessentityid = c.BusinessEntityID 
+  order by TerritoryID;
+
+
+
+/*4. Write a query to display the Business Entities of the customers that have the 'Vista' credit card.*/
+
+  select a.BusinessEntityID , b.CreditCardID, b.CardType
+  from sales.PersonCreditCard as a
+  join sales.CreditCard as b
+  on a.creditcardid=b.CreditCardID 
+  where b.CardType='Vista' 
+  order by BusinessEntityID;
+
+
+
+/*5, Write a query to display all the country region codes along with their corresponding territory IDs*/
+
+
+ select distinct(a.CountryRegionCode), b.TerritoryID
+ from sales.CountryRegionCurrency a
+ left join sales.SalesTerritory b
+ on a.CountryRegionCode= b.CountryRegionCode
+ order by a.CountryRegionCode;
+
+
+/*6. Find out the average of the total dues of all the orders.*/
+
+select round(avg(totaldue),2) as Total_amount
+from sales.SalesOrderheader;
+
+
+/*7. Write a query to report the sales order ID of those orders where the total value is greater than the average of the total value of all the orders.*/
+  
+
+ select salesorderid,round(totaldue,2) as total_value 
+ from sales.salesorderheader
+ where round(totaldue,2) > (select round(avg(totaldue),2)
+ from sales.salesorderheader);
+
+

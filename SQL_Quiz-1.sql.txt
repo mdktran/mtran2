@@ -1,0 +1,44 @@
+use AdventureWorks2012;
+
+/*a.	Show First name and last name of employees whose job title is “Sales Representative”, ranking from oldest to youngest. You may use HumanResources.Employee table and Person.Person table. (14 rows)*/
+
+select a.firstname FirstName, a.lastname LastName, b.jobtitle JobTitle, b.birthdate DOB
+from humanresources.employee b
+join person.person a
+on a.businessentityid=b.BusinessEntityID 
+where b.jobtitle='Sales Representative'
+order by b.birthdate;
+
+
+/*b.	Find out all the products which sold more than $5000 in total. Show product ID and name and total amount collected after selling the products. You may use LineTotal from Sales.SalesOrderDetail table and Production.Product table. (254 rows)*/
+
+select a.productid ProductID, a.name Product_Name, round(sum(linetotal),2) Total_Sales
+from production.product a
+join sales.salesorderDetail b
+on a.ProductID=b.Productid 
+group by a.productid, a.name
+having sum(linetotal) >=5000
+order by productid;
+
+/*c.	Show BusinessEntityID, territory name and SalesYTD of all sales persons whose SalesYTD is greater than $500,000, regardless of whether they are assigned a territory. You may use Sales.SalesPerson table and Sales.SalesTerritory table. (16 rows)*/
+
+select a.businessentityid BusinessEntity, c.FirstName, c.MiddleName, c.LastName,b.name TerritoryName, round(a.salesytd,2) Sales
+from sales.salesperson a
+left join sales.SalesTerritory b
+on a.TerritoryID=b.TerritoryID
+join  person.person c
+ on a.businessentityid = c.BusinessEntityID 
+where a.salesytd > 500000;
+
+/*d.	Show the sales order ID of those orders in the year 2008 of which the total due is great than the average total due of all the orders of the same year. (3200 rows)*/
+
+select salesorderid SalesOrderID, round(totaldue,2)TotalDue
+from sales.SalesOrderHeader
+where round(totaldue,2) > (select round(avg(totaldue),2)
+from sales.salesorderheader where orderdate like '%2008%')
+and orderdate like '%2008%';
+
+
+09/29/2017
+Matt Tran
+mtran2@babson.edu
